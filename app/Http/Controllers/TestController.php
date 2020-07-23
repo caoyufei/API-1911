@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use GuzzleHttp\Client;
+use App\Model\GoodsModel;
+use Illuminate\Support\Facades\Redis;
 class TestController extends Controller
 {
     public function hello()
@@ -54,4 +56,64 @@ class TestController extends Controller
 
         echo $data;
     }
+
+    public function  userInfo()
+    {
+        echo 'userinfo11';
+    }
+
+    public function test2()
+    {
+        $url='http://www.1911.com/test2';
+        $response=file_get_contents($url);
+        var_dump($response);
+    }
+
+
+
+    //接口登录
+    public function login(Request $request)
+    {
+        //echo '<prev>';print_r($_POST);echo '<prev>';die;
+        $name=$request->post('name');
+        $pass=$request->post('pass');
+    }
+
+
+    //商品详情
+    public function goods(Request $request)
+    {
+        $goods_id = $request->get('id');
+        $key = 'h:goods_info:' . $goods_id;
+
+        //先判断缓存
+        $goods_info = Redis::hgetAll($key);
+
+        if (empty($info)) {
+            echo "商品的ID:" . $goods_id;
+            echo '<br>';
+            $g = GoodsModel::select('goods_id', 'goods_sn', 'cat_id', 'goods_name')->find($goods_id);
+            // dd($g);
+            //缓存到redis
+            $goods_info = $g->toArray();
+            Redis::hmset($key, $goods_info);
+            echo "无缓存";
+            echo '<pre>';
+            print_r($goods_info);
+            echo '</pre>';
+            die;
+        } else {
+            echo "缓存";
+            echo '<pre>';
+            print_r($goods_info);
+            echo '</pre>';
+            die;
+            }
+        }
+
+    public function test1()
+    {
+        echo __METHOD__;
+    }
+
 }
