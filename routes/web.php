@@ -32,3 +32,11 @@ Route::get('/user/center',"User\IndexController@center")->middleware('verify.tok
 
 Route::get('/goods',"TestController@goods");  //商品
 Route::get('/test1',"TestController@test1")->middleware('count');
+
+Route::get('/test/ase1',"TestController@ase1");  //加密
+
+Route::post('/test/dec',"TestController@dec");   //解密
+
+Route::get('/test/rsa1',"TestController@rsa1");   //非对称加密
+
+Route::get('/test/sign1',"TestController@sign1");   //非对称加密

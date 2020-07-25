@@ -116,4 +116,88 @@ class TestController extends Controller
         echo __METHOD__;
     }
 
+    public function ase1()
+    {
+        $data='hello world';    //原始数据
+        $method='AES-256-CBC';   //加密算法
+        $key='1911api';   //加密密钥
+        $iv='aaaabbbbccccdddd';   //初始化iv  cbc加密方式使用
+
+        echo "原始数据：".$data;echo '</br>';
+
+        $enc_data=openssl_encrypt($data,$method,$key,OPENSSL_RAW_DATA,$iv);
+        echo "加密的密文：".$enc_data;echo '</br>';
+
+        echo '<hr>';
+
+        $dec_data=openssl_decrypt($enc_data,$method,$key,OPENSSL_RAW_DATA,$iv);
+
+        echo "解密的密文：".$dec_data;
+    }
+
+        //post解密
+    public function dec1(Request $request)
+    {
+        $key='1911api';
+        $iv='aaaabbbbccccdddd';
+        $method='AES-256-CBC';
+
+        $enc_data=$request->post('data');
+
+        //解密数据
+        $dec_data=openssl_decrypt($enc_data,$method,$key,OPENSSL_RAW_DATA,$iv);
+        var_dump($dec_data);
+
+    }
+
+    //解密
+    public function dec(Request $request)
+    {
+        $method='AES-256-CBC';
+        $key='1911api';
+        $iv='aaaabbbbccccxxxx';
+        $option=OPENSSL_RAW_DATA;
+
+
+       // $content=file_get_contents("php://input"); //接受post原始数据
+        echo '<pre>';print_r($_POST);echo '</pre>';echo '</br>';
+
+        //echo $content;die;
+        $enc_data=base64_decode($_POST['data']);
+
+
+//        $enc_data=base64_decode($request->get('data'));
+
+        //解密数据
+        $dec_data=openssl_decrypt($enc_data,$method,$key,$option,$iv);
+
+        echo "解密数据：".$dec_data;
+
+    }
+
+    public  function  rsa1()
+    {
+        $data="长江长江我是黄河";
+
+        $content=file_get_contents(storage_path('keys/pub.key'));
+        $pub_key=openssl_get_publickey($content);
+        //var_dump($pub_key);die;
+        openssl_public_encrypt($data,$enc_data,$pub_key);
+        var_dump($enc_data);
+
+
+    }
+
+    public  function sign1(Request $request)
+    {
+        $key='1911api';  //计算签名的key
+
+        //接收数据
+        $data=$request->get('data');
+        $sign=$request->get('sign');  //接收到的签名
+
+        //计算签名
+        $sign_str1=md5($data.$key);
+    }
+
 }
